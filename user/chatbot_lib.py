@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 # AWS Client 설정
 session = boto3.Session()
-bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime')
+bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime', 'us-west-2')
 
 AGENT_ID = 'OT2HHDCOPW'
 AGENT_ALIAS_ID = 'GRTCU0MHQ6' # anthropic.claude-3-5-sonnet-20241022-v2:0
