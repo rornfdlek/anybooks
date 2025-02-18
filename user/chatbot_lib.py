@@ -17,7 +17,7 @@ AGENT_ALIAS_ID = 'GRTCU0MHQ6' # anthropic.claude-3-5-sonnet-20241022-v2:0
 SESSION_ID = str(uuid.uuid1())
 
 # Bedrock Agent 호출 
-def invokeAgent(query, enable_trace=True):
+def invokeAgent(query, enable_trace=False):
     end_session:bool = False
     
     # invoke the agent API
@@ -29,7 +29,8 @@ def invokeAgent(query, enable_trace=True):
         enableTrace=enable_trace, 
         endSession= end_session,
         streamingConfigurations={
-            'streamFinalResponse': True
+            'streamFinalResponse': True,
+            'applyGuardrailInterval': 100,   
         }
     )
     

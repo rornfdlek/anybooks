@@ -213,14 +213,13 @@ settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
 
 # Page 정의
 chatbot_page = st.Page("user/chatbot_app.py", title="Chats", icon=":material/chat:", default=(role == "User"))
-admin1_page = st.Page("admin/admin.py", title="Search", icon=":material/search:", default=(role == "Admin"))
-admin2_page = st.Page("admin/admin2.py", title="History", icon=":material/history:")
+admin1_page = st.Page("admin/manual_app.py", title="AWS Expert Chat", icon=":material/star:", default=(role == "Admin"))
 
 # Group your pages into convenient lists.
 # These are all the pages available to logged-in users.
 account_pages = [logout_page, settings]
 user_pages = [chatbot_page]
-admin_pages = [chatbot_page, admin1_page, admin2_page]
+admin_pages = [admin1_page]
 
 # Add a title to show on all pages.
 # st.title("💬 Chat with AnyBooks!")
