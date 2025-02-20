@@ -45,7 +45,7 @@ def get_rag_response1(query):
         retrievalQuery={"text": query},
         retrievalConfiguration={
         'vectorSearchConfiguration': {
-            'numberOfResults': 100
+            'numberOfResults': 4
         },
         }
     )
@@ -114,3 +114,5 @@ def get_rag_response2(query):
 
         # LLM 응답 출력
         return response['output']['message']['content'][0]['text'], search_text
+
+
