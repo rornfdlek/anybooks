@@ -213,7 +213,7 @@ settings = st.Page("settings.py", title="Settings", icon=":material/settings:")
 
 # Page 정의
 chatbot_page = st.Page("user/chatbot_app.py", title="Chats", icon=":material/chat:", default=(role == "User"))
-admin1_page = st.Page("admin/manual_app.py", title="AWS Expert Chat", icon=":material/star:", default=(role == "Admin"))
+admin1_page = st.Page("admin/native_app.py", title="AWS Expert Chat", icon=":material/star:", default=(role == "Admin"))
 
 # Group your pages into convenient lists.
 # These are all the pages available to logged-in users.
