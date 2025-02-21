@@ -4,7 +4,7 @@ import admin.native_lib as nativelib
 
 st.title("💁🏻 Chat with AWS Expert")
 
-st.header("Amazon Bedrock Model Invocation Log Summary")
+st.header("Amazon Bedrock Model Invocation Logs")
 st.write("베드락 Model invocation 로그를 요약해드립니다.")
 
 input_text = st.text_area("Input text1", label_visibility="collapsed") #레이블이 없는 여러 줄 텍스트 상자를 표시
@@ -13,7 +13,7 @@ go_button = st.button("Summarize", type="primary") #기본 버튼을 표시
 if go_button: #버튼을 클릭하면 이 if 블록의 코드가 실행됩니다
         
     with st.spinner("Working..."): #이 with 블록의 코드가 실행되는 동안 스피너를 표시합니다
-        rows = nativelib.get_log_response(
+        rows, query_execution_id = nativelib.get_log_response(
             query=input_text
             ) #지원 라이브러리를 통해 모델을 호출
         
@@ -22,11 +22,13 @@ if go_button: #버튼을 클릭하면 이 if 블록의 코드가 실행됩니다
 
         # 3. Athena 결과 DataFrame이 존재하면, Bedrock을 통해 자연어 응답 생성
         if df is not None:
-            # 자연어 응답 생성 함수 호출
-            nl_response = nativelib.generate_natural_language_response_from_query_result(df)
+            # # 자연어 응답 생성 함수 호출
+            # nl_response = nativelib.generate_natural_language_response_from_query_result(df)
             
-            # 자연어 응답 출력
-            st.markdown("### 자연어 응답")
+            # # 자연어 응답 출력
+            # st.markdown("### 자연어 응답")
+            # st.write(nl_response)
+            nl_response = nativelib.generate_natural_language_response_from_s3_query_result_csv(query_execution_id)
             st.write(nl_response)
         # st.write(response_content) #응답 콘텐츠 표시
         # # Athena 결과의 rows 변수에서 첫 번째 행은 헤더로 사용

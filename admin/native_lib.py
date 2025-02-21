@@ -8,10 +8,11 @@ import streamlit as st
 # 0. 환경 설정
 # ----------------------------
 REGION_NAME = "us-west-2"  # 실제 사용 지역으로 변경
-BEDROCK_MODEL_ID = "anthropic.claude-3-sonnet-20240229-v1:0"  # 실제 Bedrock 모델 ID
-ATHENA_OUTPUT_S3 = "s3://anybooks-athena-query-results/"  # Athena 결과를 저장할 S3 경로
-GLUE_DATABASE = "anybooks-logs-db-2"
-GLUE_TABLE = "anybooks_bedrock_model_logs_unzipped"
+BEDROCK_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"  # 실제 Bedrock 모델 ID
+ATHENA_OUTPUT_S3 = "s3://cw-metric-stream-athena-query-results/"  # Athena 결과를 저장할 S3 경로
+GLUE_DATABASE = "cw-metric-stream-db"
+GLUE_TABLE = "metricstreams_quickpartial_metric_stream_taqi5jou"
+ATHENA_OUTPUT_S3_BUCKET_NAME = "cw-metric-stream-athena-query-results"
 
 # Athena에서 쿼리를 실행할 WorkGroup 설정 (기본 workgroup 사용 시 생략 가능)
 ATHENA_WORKGROUP = "primary"
@@ -21,6 +22,7 @@ ATHENA_WORKGROUP = "primary"
 # ----------------------------
 bedrock_client = boto3.client('bedrock-runtime', region_name=REGION_NAME)
 athena_client = boto3.client('athena', region_name=REGION_NAME)
+s3_client = boto3.client('s3', region_name=REGION_NAME)
 
 # ----------------------------
 # 2. (옵션) 테이블 스키마 가져오기
@@ -35,6 +37,7 @@ columns_info = response['Table']['StorageDescriptor']['Columns']
 schema_description = "\n".join(
     [f"{col['Name']}: {col['Type']}" for col in columns_info]
 )
+print(schema_description)
 
 def get_log_response(query):
     # ----------------------------
@@ -149,9 +152,8 @@ def get_log_response(query):
             data = [col.get("VarCharValue", "") for col in row["Data"]]
             print(" | ".join(data))
 
-        return rows
+        return rows, query_execution_id
 
-         
     else:
         return ("쿼리가 실패했거나 취소되었습니다.")
 
@@ -203,6 +205,88 @@ def generate_natural_language_response_from_query_result(query_df):
     """
     # DataFrame을 CSV 형식의 텍스트로 변환 (인덱스 없이)
     query_text = query_df.to_csv(index=False)
+    
+    # Bedrock에 전달할 프롬프트 구성
+    prompt = f"""
+    아래의 Athena 쿼리 결과를 자연어로 요약하고 해석해줘.
+
+    쿼리 결과:
+    {query_text}
+
+    자연어 응답:
+        """.strip()
+        
+
+    json_payload = json.dumps({
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens" : 2048,
+        "temperature": 0,
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": prompt
+                    }
+                ]
+            }
+        ]
+    })
+    
+    # Bedrock 모델 호출
+    response = bedrock_client.invoke_model(
+        modelId=BEDROCK_MODEL_ID,
+        body=json_payload,
+        contentType='application/json'
+    )
+    response_text = response['body'].read().decode('utf-8')
+    parsed_response = json.loads(response_text)
+    
+    # 모델 응답에서 자연어 텍스트 추출 (예: content 배열 내 첫 번째 항목의 text 필드)
+    answer = parsed_response["content"][0]["text"]
+    return answer
+
+
+def display_athena_results(rows):
+    """
+    Athena 쿼리 결과(rows)를 받아서, DataFrame으로 변환한 후 Streamlit 테이블로 출력하고 반환합니다.
+    첫 번째 행은 헤더로 사용됩니다.
+    
+    Args:
+        rows (list): Athena 쿼리 결과의 "Rows" 리스트
+    
+    Returns:
+        pd.DataFrame: 생성된 DataFrame (데이터가 없으면 None)
+    """
+    if not rows or len(rows) < 2:
+        st.warning("결과가 없거나 헤더 외에 데이터 행이 없습니다.")
+        return None
+
+    # 첫 번째 행은 컬럼 헤더
+    header = [col.get("VarCharValue", "") for col in rows[0]["Data"]]
+
+    # 이후 행은 데이터
+    data_list = []
+    for row in rows[1:]:
+        row_data = [col.get("VarCharValue", "") for col in row["Data"]]
+        data_list.append(row_data)
+
+    # DataFrame 생성
+    df = pd.DataFrame(data_list, columns=header)
+    
+    # Streamlit 테이블 출력
+    st.dataframe(df)
+    return df
+
+
+def generate_natural_language_response_from_s3_query_result_csv(query_execution_id):
+   
+    obj = s3_client.get_object(Bucket=ATHENA_OUTPUT_S3_BUCKET_NAME, Key=query_execution_id+".csv")
+    df = pd.read_csv(obj['Body'])
+    
+    # DataFrame을 CSV 형식의 텍스트로 변환 (인덱스 없이)
+    query_text = df.to_csv(index=False)
     
     # Bedrock에 전달할 프롬프트 구성
     prompt = f"""
