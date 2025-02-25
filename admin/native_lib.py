@@ -155,7 +155,7 @@ def get_log_response(query):
         return rows, query_execution_id
 
     else:
-        return ("쿼리가 실패했거나 취소되었습니다.")
+        return None, "쿼리가 실패했거나 취소되었습니다."
 
 
 def display_athena_results(rows):
@@ -203,6 +203,7 @@ def generate_natural_language_response_from_query_result(query_df):
     Returns:
         str: Bedrock이 생성한 자연어 응답 텍스트
     """
+
     # DataFrame을 CSV 형식의 텍스트로 변환 (인덱스 없이)
     query_text = query_df.to_csv(index=False)
     
@@ -233,7 +234,7 @@ def generate_natural_language_response_from_query_result(query_df):
             }
         ]
     })
-    
+
     # Bedrock 모델 호출
     response = bedrock_client.invoke_model(
         modelId=BEDROCK_MODEL_ID,
@@ -289,19 +290,22 @@ def generate_natural_language_response_from_s3_query_result_csv(query_execution_
     query_text = df.to_csv(index=False)
     
     # Bedrock에 전달할 프롬프트 구성
+    # You are an AWS expert. Please summarize and interpret the following query results in natural language.
+    # Provide a detailed, technical, yet easy to understand response. Answer in Korean.
     prompt = f"""
-    아래의 Athena 쿼리 결과를 자연어로 요약하고 해석해줘.
+    당신은 AWS 전문가입니다. 아래의 쿼리 결과를 자연어로 요약하고 해석해주세요.
+    쿼리 결과에서 Amazon Bedrock 사용에 대한 문제 발생 지점이 파악되면 문제 해결에 대한 전문적이면서 이해하기 쉬운 초기 대응 가이드도 제공해주세요.
 
     쿼리 결과:
     {query_text}
-
+    
     자연어 응답:
         """.strip()
         
 
     json_payload = json.dumps({
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens" : 1024,
+        "max_tokens" : 2048,
         "temperature": 0,
         "messages": [
             {

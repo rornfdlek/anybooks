@@ -11,7 +11,7 @@ session = boto3.Session()
 bedrock_agent_runtime_client = boto3.client('bedrock-agent-runtime', 'us-west-2')
 
 AGENT_ID = 'OT2HHDCOPW'
-AGENT_ALIAS_ID = 'GRTCU0MHQ6' # anthropic.claude-3-5-sonnet-20241022-v2:0
+AGENT_ALIAS_ID = 'GQN9MUI6XP' # anthropic.claude-3-5-sonnet-20241022-v2:0
 # AGENT_ALIAS_ID = 'DD3PDPMPCZ' # anthropic.claude-3-5-sonnet-20240620-v1:0
 # AGENT_ALIAS_ID = 'JZDY9GIHZF' # arn:aws:bedrock:us-west-2:682033488544:inference-profile/us.amazon.nova-pro-v1:0
 SESSION_ID = str(uuid.uuid1())

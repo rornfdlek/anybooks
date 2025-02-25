@@ -4,8 +4,8 @@ import admin.native_lib as nativelib
 
 st.title("💁🏻 Chat with AWS Expert")
 
-st.header("Amazon Bedrock Model Invocation Logs")
-st.write("베드락 Model invocation 로그를 요약해드립니다.")
+st.header("Amazon Bedrock Metrics")
+st.write("베드락 CloudWatch 모니터링 지표들에 대해 질문하세요!")
 
 input_text = st.text_area("Input text1", label_visibility="collapsed") #레이블이 없는 여러 줄 텍스트 상자를 표시
 go_button = st.button("Summarize", type="primary") #기본 버튼을 표시
