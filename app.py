@@ -60,7 +60,7 @@ css = f"""
 logging.basicConfig(
     format='[%(asctime)s] - p%(process)s - {%(filename)s:%(lineno)d} - %(levelname)s - %(message)s', 
     level=logging.INFO,
-    # filename='anybooks_application.log'
+    filename='anybooks_application.log'
     )
 
 

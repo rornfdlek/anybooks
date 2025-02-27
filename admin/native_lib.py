@@ -189,6 +189,7 @@ def display_athena_results(rows):
     st.dataframe(df)
     return df
 
+
 def generate_natural_language_response_from_query_result(query_df):
     """
     Athena 쿼리 결과 DataFrame을 텍스트로 변환한 후,
