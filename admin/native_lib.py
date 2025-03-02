@@ -8,7 +8,7 @@ import streamlit as st
 # 0. 환경 설정
 # ----------------------------
 REGION_NAME = "us-west-2"  # 실제 사용 지역으로 변경
-BEDROCK_MODEL_ID = "anthropic.claude-3-5-sonnet-20241022-v2:0"  # 실제 Bedrock 모델 ID
+BEDROCK_MODEL_ID = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"  # 실제 Bedrock 모델 ID
 ATHENA_OUTPUT_S3 = "s3://cw-metric-stream-athena-query-results/"  # Athena 결과를 저장할 S3 경로
 GLUE_DATABASE = "cw-metric-stream-db"
 GLUE_TABLE = "metricstreams_quickpartial_metric_stream_taqi5jou"
