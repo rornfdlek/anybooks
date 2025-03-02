@@ -1,0 +1,4 @@
+[2025-03-02 15:10:27,737] - p30635 - {credentials.py:1278} - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+[2025-03-02 15:17:22,000] - p31123 - {credentials.py:1278} - INFO - Found credentials in shared credentials file: ~/.aws/credentials
+[2025-03-02 15:18:19,544] - p31123 - {httpchecksum.py:487} - INFO - Skipping checksum validation. Response did not contain one of the following algorithms: ['crc32', 'sha1', 'sha256'].
+[2025-03-02 15:20:03,454] - p31123 - {httpchecksum.py:487} - INFO - Skipping checksum validation. Response did not contain one of the following algorithms: ['crc32', 'sha1', 'sha256'].

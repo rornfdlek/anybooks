@@ -105,7 +105,9 @@ def get_log_response(query):
     # content 필드 내 text가 실제 SQL 쿼리
     query = parsed_response["content"][0]["text"]
     query = query.strip()
-
+    # 1. 마크다운 코드 블록 제거: ```sql 과 ``` 제거
+    query = query.replace("```sql", "").replace("```", "")
+    
     print("=== Extracted SQL Query ===")
     print(query)
 
