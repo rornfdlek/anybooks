@@ -19,8 +19,9 @@ SESSION_ID = str(uuid.uuid1())
 # Bedrock Agent 호출 
 def invokeAgent(query, enable_trace=False):
     end_session:bool = False
-    
+
     # invoke the agent API
+    logger.info(f"👨‍💼 Invoking agent with query: {query}")
     agentResponse = bedrock_agent_runtime_client.invoke_agent(
         inputText=query,
         agentId=AGENT_ID,
@@ -33,7 +34,7 @@ def invokeAgent(query, enable_trace=False):
             'applyGuardrailInterval': 100,   
         }
     )
-    
+
     if enable_trace:
         logger.info(pprint.pprint(agentResponse))
     

@@ -114,7 +114,7 @@ def get_log_response(query):
     
     print("=== Extracted SQL Query ===")
     print(query)
-    logger.info(f"Extracted SQL Query: {query}")
+    logger.info(f"🧑‍💻 Extracted SQL Query: {query}")
 
     # ----------------------------
     # 4. Athena에서 SQL 쿼리 실행
