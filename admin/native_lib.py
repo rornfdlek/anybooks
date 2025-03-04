@@ -3,6 +3,10 @@ import time
 import boto3
 import pandas as pd
 import streamlit as st
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 # ----------------------------
 # 0. 환경 설정
@@ -110,6 +114,7 @@ def get_log_response(query):
     
     print("=== Extracted SQL Query ===")
     print(query)
+    logger.info(f"Extracted SQL Query: {query}")
 
     # ----------------------------
     # 4. Athena에서 SQL 쿼리 실행
